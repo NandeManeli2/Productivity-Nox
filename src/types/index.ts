@@ -31,13 +31,11 @@ export interface WaterLog {
 }
 
 export interface UserPreferences {
-  id: string;
-  user_id: string;
-  theme: 'light' | 'dark' | 'system';
+  daily_water_goal: number;
+  daily_calorie_goal: number;
   notifications_enabled: boolean;
-  water_goal: number;
-  created_at: string;
-  updated_at: string;
+  theme?: 'light' | 'dark';
+  language?: string;
 }
 
 export interface AnalyticsEvent {

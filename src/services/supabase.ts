@@ -228,30 +228,37 @@ export const deleteWaterLog = async (logId: string) => {
 };
 
 // User Preferences
-export const getUserPreferences = async (userId: string) => {
-  const { data, error } = await supabase
-    .from('user_preferences')
-    .select('*')
-    .eq('user_id', userId)
-    .single();
+export const getUserPreferences = async (userId: string): Promise<UserPreferences | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('user_preferences')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
 
-  if (error) throw error;
-  return data as UserPreferences;
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error fetching user preferences:', error);
+    return null;
+  }
 };
 
-export const updateUserPreferences = async (
-  userId: string,
-  updates: Partial<UserPreferences>
-) => {
-  const { data, error } = await supabase
-    .from('user_preferences')
-    .update(updates)
-    .eq('user_id', userId)
-    .select()
-    .single();
+export const updateUserPreferences = async (userId: string, preferences: UserPreferences): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('user_preferences')
+      .upsert({
+        user_id: userId,
+        ...preferences,
+        updated_at: new Date().toISOString(),
+      });
 
-  if (error) throw error;
-  return data as UserPreferences;
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error updating user preferences:', error);
+    throw error;
+  }
 };
 
 // Analytics
